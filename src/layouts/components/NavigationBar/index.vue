@@ -1,35 +1,37 @@
 <script lang="ts" setup>
-import { useRouter } from "vue-router"
-import { storeToRefs } from "pinia"
-import { useAppStore } from "@/store/modules/app"
-import { useSettingsStore } from "@/store/modules/settings"
-import { useUserStore } from "@/store/modules/user"
+import Notify from "@@/components/Notify/index.vue"
+import Screenfull from "@@/components/Screenfull/index.vue"
+import SearchMenu from "@@/components/SearchMenu/index.vue"
+import ThemeSwitch from "@@/components/ThemeSwitch/index.vue"
+import { useDevice } from "@@/composables/useDevice"
+import { useLayoutMode } from "@@/composables/useLayoutMode"
 import { UserFilled } from "@element-plus/icons-vue"
-import Hamburger from "../Hamburger/index.vue"
-import Breadcrumb from "../Breadcrumb/index.vue"
-import Sidebar from "../Sidebar/index.vue"
-import Notify from "@/components/Notify/index.vue"
-import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
-import Screenfull from "@/components/Screenfull/index.vue"
-import SearchMenu from "@/components/SearchMenu/index.vue"
-import { useDevice } from "@/hooks/useDevice"
-import { useLayoutMode } from "@/hooks/useLayoutMode"
+import { useAppStore } from "@/pinia/stores/app"
+import { useSettingsStore } from "@/pinia/stores/settings"
+import { useUserStore } from "@/pinia/stores/user"
+import { Breadcrumb, Hamburger, Sidebar } from "../index"
 
 const { isMobile } = useDevice()
+
 const { isTop } = useLayoutMode()
+
 const router = useRouter()
+
 const appStore = useAppStore()
+
 const userStore = useUserStore()
+
 const settingsStore = useSettingsStore()
+
 const { showNotify, showThemeSwitch, showScreenfull, showSearchMenu } = storeToRefs(settingsStore)
 
 /** 切换侧边栏 */
-const toggleSidebar = () => {
+function toggleSidebar() {
   appStore.toggleSidebar(false)
 }
 
 /** 登出 */
-const logout = () => {
+function logout() {
   userStore.logout()
   router.push("/login")
 }
@@ -50,8 +52,8 @@ const logout = () => {
       <Screenfull v-if="showScreenfull" class="right-menu-item" />
       <ThemeSwitch v-if="showThemeSwitch" class="right-menu-item" />
       <Notify v-if="showNotify" class="right-menu-item" />
-      <el-dropdown class="right-menu-item">
-        <div class="right-menu-avatar">
+      <el-dropdown>
+        <div class="right-menu-item user">
           <el-avatar :icon="UserFilled" :size="30" />
           <span>{{ userStore.username }}</span>
         </div>
@@ -64,7 +66,7 @@ const logout = () => {
               <el-dropdown-item>Gitee</el-dropdown-item>
             </a>
             <el-dropdown-item divided @click="logout">
-              <span style="display: block">退出登录</span>
+              退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -104,7 +106,7 @@ const logout = () => {
     :deep(.el-sub-menu) {
       &.is-active {
         .el-sub-menu__title {
-          color: var(--el-color-primary) !important;
+          color: var(--el-color-primary);
         }
       }
     }
@@ -114,18 +116,21 @@ const logout = () => {
     height: 100%;
     display: flex;
     align-items: center;
-    .right-menu-item {
-      padding: 0 10px;
+    &-item {
+      margin: 0 10px;
       cursor: pointer;
-      .right-menu-avatar {
-        display: flex;
-        align-items: center;
-        .el-avatar {
-          margin-right: 10px;
-        }
-        span {
-          font-size: 16px;
-        }
+      &:last-child {
+        margin-left: 20px;
+      }
+    }
+    .user {
+      display: flex;
+      align-items: center;
+      .el-avatar {
+        margin-right: 10px;
+      }
+      span {
+        font-size: 16px;
       }
     }
   }
